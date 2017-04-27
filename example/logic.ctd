@@ -1,0 +1,27 @@
+
+$ unit : * = (X:*) -> X -> X ;;
+$ id : unit = \X:*. \x:X. x ;;
+
+	--------
+	-- Eq --
+	--------
+
+$ Eq : (X:*) -> (x:X) -> (y:X) -> * = \X:*. \x:X. \y:X. (f:X->*) -> (f x) -> (f y) ;;
+
+$ eq_refl : (X:*) -> (x:X) -> (Eq X x x) =
+	\X:*. \x:X. \f:X->*. id (f x)
+;;
+
+$ eq_trans : (X:*) -> (x:X) -> (y:X) -> (z:X) -> (Eq X x y) -> (Eq X y z) -> (Eq X x z) =
+	\X:*. \x:X. \y:X. \z:X. \f:Eq X x y. \g:Eq X y z.
+		\T:X->*. \a:T x. g T (f T a)
+;;
+
+$ eq_symm : (X:*) -> (x:X) -> (y:X) -> (Eq X x y) -> (Eq X y x) =
+	\X:*. \x:X. \y:X. \H:Eq X x y.
+		$ T : X->* = \k:X. Eq X k x ;
+		$ e : Eq X x x  = eq_refl X x ;
+		$ e : T x = e ;
+		H T e
+;;
+
